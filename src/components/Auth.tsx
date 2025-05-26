@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Mail, Lock, UserPlus, LogIn } from 'lucide-react';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 interface AuthProps {
   onAuthSuccess: () => void;
@@ -26,14 +20,11 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
     setLoading(true);
 
     try {
-      const { error: authError } = isLogin
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
-
-      if (authError) throw authError;
+      // Simulate authentication
+      await new Promise(resolve => setTimeout(resolve, 1000));
       onAuthSuccess();
     } catch (err) {
-      setError(err.message);
+      setError('Authentication failed. Please try again.');
     } finally {
       setLoading(false);
     }

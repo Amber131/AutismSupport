@@ -1,22 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { Send, Image } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
 interface Message {
   id: string;
-  user_id: string;
+  userId: string;
   content: string;
-  created_at: string;
-  user_email: string;
+  createdAt: string;
+  userEmail: string;
 }
 
 const Chat: React.FC = () => {
@@ -30,68 +24,25 @@ const Chat: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMessages();
-    const subscription = supabase
-      .channel('messages')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, 
-        payload => {
-          setMessages(current => [...current, payload.new as Message]);
-          scrollToBottom();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching messages:', error);
-      return;
-    }
-
-    setMessages(data || []);
-  };
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
+    
+    const message: Message = {
+      id: Math.random().toString(36).substr(2, 9),
+      userId: 'current-user',
+      content: newMessage.trim(),
+      createdAt: new Date().toISOString(),
+      userEmail: 'user@example.com'
+    };
 
-    if (!user) {
-      console.error('No user found');
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from('messages')
-      .insert([
-        {
-          content: newMessage.trim(),
-          user_id: user.id,
-          user_email: user.email
-        }
-      ]);
-
-    if (error) {
-      console.error('Error sending message:', error);
-    } else {
-      setNewMessage('');
-    }
+    setMessages(prev => [...prev, message]);
+    setNewMessage('');
     setLoading(false);
   };
 
@@ -103,9 +54,9 @@ const Chat: React.FC = () => {
             <div className="flex items-start">
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-gray-800">{message.user_email}</span>
+                  <span className="font-medium text-gray-800">{message.userEmail}</span>
                   <span className="text-sm text-gray-500">
-                    {format(new Date(message.created_at), 'dd בMMMM, HH:mm', { locale: he })}
+                    {format(new Date(message.createdAt), 'dd בMMMM, HH:mm', { locale: he })}
                   </span>
                 </div>
                 <p className="text-gray-700">{message.content}</p>
