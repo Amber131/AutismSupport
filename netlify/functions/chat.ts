@@ -56,10 +56,7 @@ const handler: Handler = async (event) => {
           4. Share practical strategies for daily challenges
           5. Connect parents with relevant support organizations`
         },
-        ...messages.map(msg => ({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        }))
+        ...messages
       ],
       temperature: 0.7,
       max_tokens: 500
