@@ -1,34 +1,54 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import StageSelector from '../components/StageSelector';
 import EmotionalSupport from '../components/EmotionalSupport';
-import { Heart, BookOpen, Users, Award } from 'lucide-react';
+import { Heart, BookOpen, Users, Award, Globe } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Link } from '../components/ui/Link';
 
 const Home: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t, i18n } = useTranslation();
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'he' ? 'en' : 'he');
+  };
+
+  const isRTL = i18n.language === 'he';
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isRTL ? 'rtl' : 'ltr'}`}>
       <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       
       <main className="flex-grow pt-16">
+        {/* Language Switcher */}
+        <div className="fixed top-20 right-4 z-50">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleLanguage}
+            icon={<Globe className="h-4 w-4" />}
+          >
+            {isRTL ? 'English' : 'עברית'}
+          </Button>
+        </div>
+
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-blue-50 to-white py-16 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0 md:pr-10">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                  לא לבד במסע על הספקטרום
+                  {t('home.title')}
                 </h1>
                 <p className="text-xl text-gray-600 mb-6">
-                  תמיכה, הכוונה, ומידע להורים לילדים עם אוטיזם בישראל בכל שלב במסע.
+                  {t('home.subtitle')}
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Button 
@@ -37,7 +57,7 @@ const Home: React.FC = () => {
                     className="shadow-md"
                   >
                     <Link href="#stage-selector" className="text-white">
-                      התחל כאן
+                      {t('home.getStarted')}
                     </Link>
                   </Button>
                   <Button 
@@ -45,15 +65,15 @@ const Home: React.FC = () => {
                     size="lg"
                   >
                     <Link href="/resources" className="text-gray-700">
-                      גישה למשאבים
+                      {t('home.resources')}
                     </Link>
                   </Button>
                 </div>
               </div>
               <div className="md:w-1/2">
                 <img
-                  src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                  alt="הורה וילד משחקים יחד"
+                  src="https://images.pexels.com/photos/8612967/pexels-photo-8612967.jpeg"
+                  alt="Parent and child playing together"
                   className="rounded-lg shadow-xl w-full"
                 />
               </div>
@@ -64,10 +84,6 @@ const Home: React.FC = () => {
         {/* Feature Highlights */}
         <section className="py-16 px-4 bg-white">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-12">
-              כאן בשבילכם בכל שלב
-            </h2>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="bg-blue-50 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
                 <div className="bg-white rounded-full p-4 mx-auto mb-4 w-16 h-16 flex items-center justify-center shadow-sm">
@@ -123,83 +139,6 @@ const Home: React.FC = () => {
         <section className="py-16 px-4 bg-white">
           <div className="container mx-auto max-w-4xl">
             <EmotionalSupport />
-          </div>
-        </section>
-        
-        {/* Testimonials */}
-        <section className="py-16 px-4 bg-blue-50">
-          <div className="container mx-auto max-w-6xl">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-12">
-              הורים כמוכם מספרים
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                    <span className="text-xl font-semibold text-blue-500">ר</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">רונית, אמא לבן בן 6</h3>
-                    <p className="text-gray-500 text-sm">תל אביב</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">
-                  "האפליקציה הזאת עזרה לי למצוא את כל המידע שהייתי צריכה אחרי האבחון. פתאום הרגשתי שיש לי מפה ברורה להמשך הדרך."
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
-                    <span className="text-xl font-semibold text-green-500">י</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">יוסי, אבא לבת בת 4</h3>
-                    <p className="text-gray-500 text-sm">ירושלים</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">
-                  "היכולת להתחבר להורים אחרים שמבינים בדיוק מה אני עובר היא פשוט מתנה. לא הרגשתי לבד יותר."
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
-                    <span className="text-xl font-semibold text-purple-500">מ</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">מיכל, אמא לבן בן 8</h3>
-                    <p className="text-gray-500 text-sm">חיפה</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">
-                  "הטיפים להתמודדות עם התפרצויות חרדה עזרו לנו כל כך. סוף סוף מצאנו שיטות שעובדות לנו כמשפחה."
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* CTA */}
-        <section className="py-16 px-4 bg-blue-600 text-white">
-          <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              התחילו את המסע שלכם היום
-            </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
-              לא משנה באיזה שלב אתם נמצאים, אנחנו כאן לתמוך בכם בכל צעד בדרך.
-            </p>
-            <Button 
-              variant="secondary" 
-              size="lg"
-              className="shadow-lg"
-            >
-              <Link href="#stage-selector" className="text-white">
-                התחל עכשיו
-              </Link>
-            </Button>
           </div>
         </section>
       </main>

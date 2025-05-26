@@ -1,16 +1,16 @@
 import React from 'react';
-import { Heart, Mail, Phone } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { Link } from './ui/Link';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-200 py-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Heart className="h-5 w-5 text-blue-500" />
-              <span className="text-lg font-semibold text-gray-800">ספקטרום תומך</span>
+              <span className="text-lg font-semibold text-gray-800">עזרללב AzarLaLev</span>
             </div>
             <p className="text-gray-600 mb-4">
               אפליקציה תומכת עבור הורים המתמודדים עם אבחון וטיפול באוטיזם בישראל.
@@ -53,52 +53,14 @@ const Footer: React.FC = () => {
                 <Link href="/rights" className="text-gray-600 hover:text-blue-500">זכויות והטבות</Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-600 hover:text-blue-500">מדיניות פרטיות</Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-gray-600 hover:text-blue-500">תנאי שימוש</Link>
+                <Link href="/privacy-terms" className="text-gray-600 hover:text-blue-500">מדיניות פרטיות ותנאי שימוש</Link>
               </li>
             </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-base font-semibold text-gray-800 mb-4">צור קשר</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center space-x-2">
-                <Mail className="h-5 w-5 text-gray-500" />
-                <Link href="mailto:support@spectrumhelp.il" className="text-gray-600 hover:text-blue-500">
-                  support@spectrumhelp.il
-                </Link>
-              </li>
-              <li className="flex items-center space-x-2">
-                <Phone className="h-5 w-5 text-gray-500" />
-                <Link href="tel:+972123456789" className="text-gray-600 hover:text-blue-500">
-                  072-123-4567
-                </Link>
-              </li>
-            </ul>
-            
-            <div className="mt-6">
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">הירשם לעדכונים</h4>
-              <form className="flex">
-                <input
-                  type="email"
-                  placeholder="האימייל שלך"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition-colors"
-                >
-                  הרשמה
-                </button>
-              </form>
-            </div>
           </div>
         </div>
         
         <div className="border-t border-gray-200 mt-8 pt-6 text-center text-gray-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} ספקטרום תומך. כל הזכויות שמורות.</p>
+          <p>&copy; {new Date().getFullYear()} עזרללב AzarLaLev. כל הזכויות שמורות.</p>
         </div>
       </div>
     </footer>

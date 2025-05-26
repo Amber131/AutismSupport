@@ -1,58 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Resources from './pages/Resources';
 import RightsAndBenefits from './pages/RightsAndBenefits';
 import BehaviorTools from './pages/BehaviorTools';
 import Community from './pages/Community';
+import Help from './pages/Help';
+import Concerns from './pages/Concerns';
+import Diagnosis from './pages/Diagnosis';
+import PostDiagnosis from './pages/PostDiagnosis';
+import Ongoing from './pages/Ongoing';
+import PrivacyAndTerms from './pages/PrivacyAndTerms';
+import About from './pages/About';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<string>('home');
-
-  // Simple routing logic
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <Home />;
-      case 'resources':
-        return <Resources />;
-      case 'rights':
-        return <RightsAndBenefits />;
-      case 'tools':
-        return <BehaviorTools />;
-      case 'community':
-        return <Community />;
-      default:
-        return <Home />;
-    }
-  };
-
-  // Override default link behavior for in-app navigation
-  React.useEffect(() => {
-    const handleNavigation = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const anchor = target.closest('a');
-      
-      if (anchor && anchor.getAttribute('href')?.startsWith('/')) {
-        event.preventDefault();
-        const path = anchor.getAttribute('href') || '/';
-        
-        // Simple routing based on path
-        if (path === '/') setCurrentPage('home');
-        else if (path === '/resources') setCurrentPage('resources');
-        else if (path === '/rights') setCurrentPage('rights');
-        else if (path === '/tools') setCurrentPage('tools');
-        else if (path === '/community') setCurrentPage('community');
-      }
-    };
-
-    document.addEventListener('click', handleNavigation);
-    return () => document.removeEventListener('click', handleNavigation);
-  }, []);
-
   return (
-    <div dir="rtl" className="min-h-screen">
-      {renderPage()}
-    </div>
+    <BrowserRouter>
+      <div dir="rtl" className="min-h-screen">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/rights" element={<RightsAndBenefits />} />
+          <Route path="/tools" element={<BehaviorTools />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/concerns" element={<Concerns />} />
+          <Route path="/diagnosis" element={<Diagnosis />} />
+          <Route path="/post-diagnosis" element={<PostDiagnosis />} />
+          <Route path="/ongoing" element={<Ongoing />} />
+          <Route path="/privacy-terms" element={<PrivacyAndTerms />} />
+          <Route path="/about" element={<About />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

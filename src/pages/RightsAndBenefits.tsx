@@ -370,24 +370,6 @@ const RightsAndBenefits: React.FC = () => {
             </div>
           </div>
         </section>
-        
-        {/* Get Help */}
-        <section className="py-12 px-4 bg-blue-50">
-          <div className="container mx-auto max-w-6xl text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              צריכים עזרה במיצוי זכויות?
-            </h2>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              מתקשים לנווט בין הבירוקרטיה והטפסים? אנחנו כאן לעזור לכם להבין ולממש את הזכויות המגיעות לכם.
-            </p>
-            <Button 
-              variant="primary"
-              size="lg"
-            >
-              יצירת קשר עם יועץ זכויות
-            </Button>
-          </div>
-        </section>
       </main>
       
       <Footer />
