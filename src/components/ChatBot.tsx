@@ -43,9 +43,19 @@ const ChatBot: React.FC = () => {
       timestamp: new Date()
     };
 
+    // Add user message and typing indicator
     setMessage('');
     setChatHistory(prev => [...prev, newUserMessage]);
     setIsTyping(true);
+
+    // Add temporary typing message
+    const typingMessage: Message = {
+      id: 'typing',
+      role: 'assistant',
+      content: '...',
+      timestamp: new Date()
+    };
+    setChatHistory(prev => [...prev, typingMessage]);
 
     try {
       const response = await fetch('/.netlify/functions/chat', {
@@ -66,6 +76,8 @@ const ChatBot: React.FC = () => {
       }
 
       const data = await response.json();
+      
+      // Replace typing message with actual response
       const newAssistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -73,16 +85,17 @@ const ChatBot: React.FC = () => {
         timestamp: new Date()
       };
 
-      setChatHistory(prev => [...prev, newAssistantMessage]);
+      setChatHistory(prev => [...prev.slice(0, -1), newAssistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
+      // Replace typing message with error message
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: 'מצטער, נתקלתי בבעיה. אנא נסו שוב מאוחר יותר.',
         timestamp: new Date()
       };
-      setChatHistory(prev => [...prev, errorMessage]);
+      setChatHistory(prev => [...prev.slice(0, -1), errorMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -125,7 +138,11 @@ const ChatBot: React.FC = () => {
                   </span>
                 </div>
                 <p className={msg.role === 'user' ? 'text-white' : 'text-gray-700'}>
-                  {msg.content}
+                  {msg.content === '...' ? (
+                    <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                  ) : (
+                    msg.content
+                  )}
                 </p>
               </div>
               {msg.role === 'user' && (
@@ -136,16 +153,6 @@ const ChatBot: React.FC = () => {
             </div>
           </div>
         ))}
-        {isTyping && (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <Bot className="h-5 w-5 text-blue-500" />
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
-            </div>
-          </div>
-        )}
         <div ref={messagesEndRef} />
       </div>
       
