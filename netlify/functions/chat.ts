@@ -6,7 +6,6 @@ const openai = new OpenAI({
 });
 
 const handler: Handler = async (event) => {
-  // Enable CORS
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -62,6 +61,8 @@ Your primary goals are to:
       max_tokens: 500
     });
 
+    console.log("GPT RAW COMPLETION:", JSON.stringify(completion, null, 2));
+
     return {
       statusCode: 200,
       headers: {
@@ -69,7 +70,7 @@ Your primary goals are to:
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: completion.choices[0].message.content
+        message: completion.choices?.[0]?.message?.content || "מצטער, משהו השתבש, נסו שוב."
       })
     };
   } catch (error) {
