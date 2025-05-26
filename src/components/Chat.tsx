@@ -37,8 +37,9 @@ const Chat: React.FC = () => {
       timestamp: new Date()
     };
 
+    const updatedMessages = [...messages, userMessage];
     setNewMessage('');
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(updatedMessages);
     setIsTyping(true);
 
     const typingMessage: Message = {
@@ -56,7 +57,7 @@ const Chat: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(msg => ({
+          messages: updatedMessages.map(msg => ({
             role: msg.role,
             content: msg.content
           }))
@@ -68,17 +69,11 @@ const Chat: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log('GPT Response:', data);
-
-      const content =
-        data.message ||
-        data.choices?.[0]?.message?.content ||
-        'מצטער, לא הצלחתי להבין. נסה שוב.';
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content,
+        content: data.message || 'מצטער, לא הצלחתי להבין. נסה שוב.',
         timestamp: new Date()
       };
 
