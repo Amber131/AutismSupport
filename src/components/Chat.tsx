@@ -66,42 +66,38 @@ const Chat: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('API Response:', data);
       
-      // Fixed: Prioritize OpenAI API response format first
-      let content: string;
-      
+      // Fix: Access the correct path for GPT response
+      let assistantResponse = '';
       if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-        // OpenAI API format
-        content = data.choices[0].message.content;
+        assistantResponse = data.choices[0].message.content;
       } else if (data.message) {
-        // Custom/fallback format
-        content = data.message;
+        // Fallback for custom response format
+        assistantResponse = data.message;
       } else {
-        // Final fallback
-        content = 'מצטער, לא הצלחתי להבין. אפשר לנסות שוב?';
+        throw new Error('Invalid response format from API');
       }
-      
+
       // Replace typing message with actual response
-      const assistantMessage: Message = {
+      const newAssistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content,
+        content: assistantResponse,
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev.slice(0, -1), assistantMessage]);
+      setMessages(prev => [...prev.slice(0, -1), newAssistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       // Replace typing message with error message
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'מצטער, נתקלתי בבעיה. אנא נסו שוב מאוחר יותר.',
+        content: 'Sorry, I encountered an issue. Please try again later.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev.slice(0, -1), errorMessage]);
@@ -110,67 +106,79 @@ const Chat: React.FC = () => {
     }
   };
 
+  const formatTime = (date: Date) => {
+    return format(date, 'HH:mm', { locale: he });
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
+    <Card className="flex flex-col h-[600px]">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
-          <Card key={message.id} className="p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 mr-3">
-                {message.role === 'assistant' ? (
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Bot className="h-5 w-5 text-blue-500" />
-                  </div>
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
-                    <User className="h-5 w-5 text-white" />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-gray-800">
-                    {message.role === 'assistant' ? 'עזרלי' : 'את/ה'}
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div className="flex items-start max-w-[80%] gap-2">
+              {msg.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <Bot className="h-5 w-5 text-blue-500" />
+                </div>
+              )}
+              <div
+                className={`rounded-lg p-4 ${
+                  msg.role === 'user'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 shadow-sm'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium">
+                    {msg.role === 'user' ? 'You' : 'Assistant'}
                   </span>
-                  <span className="text-sm text-gray-500">
-                    {format(message.timestamp, 'dd בMMMM, HH:mm', { locale: he })}
+                  <span className="text-sm opacity-70">
+                    {formatTime(msg.timestamp)}
                   </span>
                 </div>
-                <p className="text-gray-700">
-                  {message.content === '...' ? (
+                <p className={msg.role === 'user' ? 'text-white' : 'text-gray-700'}>
+                  {msg.content === '...' ? (
                     <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
                   ) : (
-                    message.content
+                    msg.content
                   )}
                 </p>
               </div>
+              {msg.role === 'user' && (
+                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+              )}
             </div>
-          </Card>
+          </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
-
-      <div className="border-t border-gray-200 p-4 bg-white">
+      
+      <div className="border-t border-gray-200 p-4 bg-white rounded-b-lg">
         <form onSubmit={sendMessage} className="flex gap-2">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="כתבו הודעה..."
+            placeholder="Type your message..."
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isTyping}
           />
           <Button
             type="submit"
             variant="primary"
-            disabled={isTyping}
+            disabled={isTyping || !newMessage.trim()}
             icon={isTyping ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
           >
-            שלח
+            Send
           </Button>
         </form>
       </div>
-    </div>
+    </Card>
   );
 };
 

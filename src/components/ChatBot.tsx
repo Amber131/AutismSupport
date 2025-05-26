@@ -72,16 +72,27 @@ const ChatBot: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
+      
+      // Fix: Access the correct path for GPT response
+      let assistantResponse = '';
+      if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+        assistantResponse = data.choices[0].message.content;
+      } else if (data.message) {
+        // Fallback for custom response format
+        assistantResponse = data.message;
+      } else {
+        throw new Error('Invalid response format from API');
+      }
       
       // Replace typing message with actual response
       const newAssistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.message,
+        content: assistantResponse,
         timestamp: new Date()
       };
 
