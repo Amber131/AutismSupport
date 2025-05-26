@@ -72,8 +72,19 @@ const Chat: React.FC = () => {
       const data = await response.json();
       console.log('API Response:', data);
       
-      // Get content from either data.message or data.choices[0].message.content
-      const content = data.message || data.choices?.[0]?.message?.content || 'מצטער, לא הצלחתי להבין. אפשר לנסות שוב?';
+      // Fixed: Prioritize OpenAI API response format first
+      let content: string;
+      
+      if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+        // OpenAI API format
+        content = data.choices[0].message.content;
+      } else if (data.message) {
+        // Custom/fallback format
+        content = data.message;
+      } else {
+        // Final fallback
+        content = 'מצטער, לא הצלחתי להבין. אפשר לנסות שוב?';
+      }
       
       // Replace typing message with actual response
       const assistantMessage: Message = {
